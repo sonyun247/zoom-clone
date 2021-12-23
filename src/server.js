@@ -14,16 +14,18 @@ const handleListen = () => console.log(`localhost:${port}`);
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
+const users = [];
 
 wss.on("connection", (user) => {
+  users.push(user);
   console.log("user Connected");
+
   user.on("close", () => {
     console.log("user Disconnected");
   });
   user.on("message", (message) => {
-    console.log(`User : ${message}`);
+    users.forEach((aUser) => aUser.send(message.toString()));
   });
-  user.send("Hi, how you doing?");
 });
 
 server.listen(port, handleListen);
