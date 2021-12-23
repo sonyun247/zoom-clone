@@ -11,12 +11,19 @@ app.use("/public", express.static(__dirname + "/public"));
 app.get("/", (req, res) => res.render("home"));
 
 const handleListen = () => console.log(`localhost:${port}`);
-const handleConnection = (browser) => {
-  console.log(browser);
-};
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+wss.on("connection", (user) => {
+  console.log("user Connected");
+  user.on("close", () => {
+    console.log("user Disconnected");
+  });
+  user.on("message", (message) => {
+    console.log(`User : ${message}`);
+  });
+  user.send("Hi, how you doing?");
+});
+
 server.listen(port, handleListen);
-wss.on("connection", handleConnection);
