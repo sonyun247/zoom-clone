@@ -18,13 +18,22 @@ const users = [];
 
 wss.on("connection", (user) => {
   users.push(user);
+  user["nickname"] = "anonymous";
   console.log("user Connected");
 
   user.on("close", () => {
     console.log("user Disconnected");
   });
   user.on("message", (message) => {
-    users.forEach((aUser) => aUser.send(message.toString()));
+    const parsedChat = JSON.parse(message);
+    switch (parsedChat.type) {
+      case "nickname":
+        user["nickname"] = parsedChat.payload;
+      case "message":
+        users.forEach((aUser) =>
+          aUser.send(`${user.nickname}: ${parsedChat.payload}`)
+        );
+    }
   });
 });
 
