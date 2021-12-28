@@ -1,6 +1,6 @@
 import express from "express";
 import http from "http";
-import WebSocket from "ws";
+import SocketIO from "socket.io";
 
 const app = express();
 const port = 3000;
@@ -13,28 +13,10 @@ app.get("/", (req, res) => res.render("home"));
 const handleListen = () => console.log(`localhost:${port}`);
 
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
-const users = [];
+const io = SocketIO(server);
 
-wss.on("connection", (user) => {
-  users.push(user);
-  user["nickname"] = "anonymous";
-  console.log("user Connected");
-
-  user.on("close", () => {
-    console.log("user Disconnected");
-  });
-  user.on("message", (message) => {
-    const parsedChat = JSON.parse(message);
-    switch (parsedChat.type) {
-      case "nickname":
-        user["nickname"] = parsedChat.payload;
-      case "message":
-        users.forEach((aUser) =>
-          aUser.send(`${user.nickname}: ${parsedChat.payload}`)
-        );
-    }
-  });
+io.on("connection", (socket) => {
+  console.log(socket);
 });
 
 server.listen(port, handleListen);

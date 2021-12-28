@@ -173,6 +173,7 @@
     "side-channel": "^1.0.4",
     "signal-exit": "^3.0.6",
     "slash": "^2.0.0",
+    "socket.io": "^4.4.0",
     "source-map": "^0.5.7",
     "source-map-support": "^0.5.21",
     "string-width": "^4.2.3",
